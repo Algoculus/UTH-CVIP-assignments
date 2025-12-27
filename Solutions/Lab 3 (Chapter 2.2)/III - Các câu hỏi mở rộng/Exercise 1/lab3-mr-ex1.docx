@@ -1,0 +1,11 @@
+1. Làm thế nào để đánh giá chất lượng của các cạnh được phát hiện bởi Canny?
+
+Đánh giá trực quan: Xem kết quả có phát hiện đủ các cạnh quan trọng không, có quá nhiều nhiễu không, các cạnh có liên tục không
+
+So sánh với ground truth: Nếu có ảnh cạnh chuẩn, tính các metrics như Precision, Recall, F1-score
+
+Kiểm tra tính liên tục: Cạnh tốt thường liên tục, không bị đứt đoạn
+
+Độ dày của cạnh: Canny cho cạnh mỏng (1 pixel), phù hợp cho nhiều ứng dụng
+
+Khả năng loại bỏ nhiễu: Đánh giá xem thuật toán có phát hiện nhiều cạnh giả do nhiễu không
