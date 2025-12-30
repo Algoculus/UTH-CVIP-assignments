@@ -1,0 +1,9 @@
+4. Làm thế nào để áp dụng Canny cho các video?
+
+Xử lý từng frame: Đọc video frame-by-frame, áp dụng Canny cho mỗi frame, sau đó ghép lại thành video
+
+Sử dụng OpenCV VideoCapture: Đọc video, loop qua các frame, xử lý và ghi ra bằng VideoWriter
+
+Tối ưu hiệu suất: Sử dụng multithreading, GPU acceleration nếu xử lý real-time
+
+Temporal consistency: Có thể làm mịn kết quả giữa các frame liên tiếp để tránh nhấp nháy
