@@ -1,0 +1,14 @@
+{
+  "name": "@facenet/shared-types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for FaceNet monorepo",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.11.0"
+}
