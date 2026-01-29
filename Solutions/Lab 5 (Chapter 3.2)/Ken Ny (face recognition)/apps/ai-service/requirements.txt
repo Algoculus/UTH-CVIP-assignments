@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+opencv-python
+mtcnn
+numpy
+tensorflow
+pydantic
+python-multipart
+facenet-pytorch
+torch
+torchvision
+Pillow
+deepface
+tf-keras
+# Note: All dependencies for face analysis are included
+# DeepFace and facenet-pytorch models will be downloaded on first use
