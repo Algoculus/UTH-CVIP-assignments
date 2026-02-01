@@ -1,11 +1,5 @@
 2. Có những phương pháp nào khác để cải thiện hiệu suất của Canny?
 
-Tiền xử lý ảnh: Khử nhiễu trước (median filter, bilateral filter), cân bằng histogram
-
-Tối ưu tham số: Điều chỉnh sigma của Gaussian blur, ngưỡng thấp/cao phù hợp với từng ảnh
-
-Xử lý hậu kỳ: Morphological operations (đóng/mở) để làm liền cạnh, loại bỏ các cạnh nhỏ
-
-Kết hợp với các thuật toán khác: Dùng Canny kết hợp Hough Transform, hoặc Deep Learning để refine kết quả
-
-Adaptive thresholding: Thay vì dùng ngưỡng cố định, tính ngưỡng tự động dựa trên histogram
+“Hiệu suất” có thể hiểu theo 2 nghĩa: chạy nhanh hơn và ra biên tốt hơn.
+Để chạy nhanh hơn, cách thực tế nhất là giảm khối lượng xử lý: resize ảnh nhỏ hơn, chỉ xử lý ROI (vùng quan tâm), hoặc bỏ qua một số khung hình nếu làm video. Ngoài ra có thể tận dụng tối ưu thư viện: dùng OpenCV (vốn đã tối ưu C++), dùng tăng tốc phần cứng nếu có (CUDA/OpenCL tùy môi trường), và tránh các bước tiền xử lý quá nặng không cần thiết.
+Để ra biên tốt hơn, thường bạn sẽ: (1) cải thiện tiền xử lý bằng Gaussian blur phù hợp hoặc lọc nhiễu tốt hơn (median/bilateral khi nhiễu muối tiêu hoặc cần giữ biên), (2) chọn ngưỡng low/high hợp lý (thường high ≈ 2–3×low, hoặc tự động hóa bằng median/Otsu), (3) dùng multi-scale (chạy nhiều sigma rồi kết hợp) để vừa giữ biên lớn vừa giữ chi tiết nhỏ, (4) hậu xử lý bằng morphology (close/dilate) hoặc loại contour nhỏ để giảm nhiễu, (5) nếu ảnh thiếu tương phản thì tăng tương phản (CLAHE/normalize) trước khi chạy Canny.
