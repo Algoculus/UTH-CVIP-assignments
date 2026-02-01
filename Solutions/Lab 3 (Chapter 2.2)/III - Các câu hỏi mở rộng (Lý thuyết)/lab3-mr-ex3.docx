@@ -1,0 +1,4 @@
+3. Canny có thể được sử dụng để phát hiện các cạnh trong ảnh màu không? Nếu có, thì như thế nào?
+
+Có, nhưng bản chất Canny dựa trên gradient cường độ nên cách phổ biến nhất là đổi ảnh màu → ảnh xám rồi chạy Canny. Đây là cách đơn giản, nhanh, và thường đủ tốt cho nhiều bài toán.
+Nếu muốn tận dụng thông tin màu tốt hơn (khi biên thể hiện rõ ở một kênh màu nào đó), bạn có thể: chạy Canny từng kênh (R,G,B) rồi gộp biên bằng OR/max; hoặc chuyển sang không gian màu như HSV/Lab rồi chạy trên kênh sáng (V hoặc L) để ổn định theo cảm nhận thị giác. Cách “chuẩn” hơn về mặt lý thuyết là tính gradient theo vector màu (gradient màu), nhưng triển khai phức tạp hơn và thường không cần cho bài thực hành cơ bản.

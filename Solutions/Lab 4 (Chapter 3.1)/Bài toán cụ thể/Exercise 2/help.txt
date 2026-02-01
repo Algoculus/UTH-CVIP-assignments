@@ -1,5 +1,0 @@
-*Yêu cầu:
-+ Code đúng yêu cầu đề bài, trọng số điểm bài tập cao nên phải làm cho kĩ.
-+ Để tất cả source code các files liên quan vào đúng thư mục bài tập của mình.
-+ Chụp hình kết quả sau khi chạy source code và để kết quả vào thư mục "results".
-+ Phải thực sự hiểu logic source code chạy để cô hỏi lúc trả lab còn biết để trả lời.

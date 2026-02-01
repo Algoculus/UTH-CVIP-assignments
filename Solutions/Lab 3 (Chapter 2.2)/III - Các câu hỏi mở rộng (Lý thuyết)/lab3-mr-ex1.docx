@@ -1,0 +1,5 @@
+1. Làm thế nào để đánh giá chất lượng của các cạnh được phát hiện bởi Canny?
+
+Có 2 hướng đánh giá chính: định tính và định lượng.
+Về định tính, bạn quan sát trực tiếp ảnh biên theo các tiêu chí: (1) Đúng vị trí: biên bám sát ranh giới thật của vật thể (không lệch), (2) Mảnh và rõ: biên không bị dày quá hoặc đứt đoạn nhiều, (3) Ít nhiễu: không có quá nhiều biên “rác” ở vùng nền, (4) Liên tục: đường biên dài nên nối liền thay vì bị gãy vụn, (5) Giữ được biên quan trọng: không bỏ sót ranh giới chính.
+Về định lượng, nếu có “ground truth” (biên chuẩn do người đánh dấu), bạn có thể đo: Precision/Recall/F1 (đúng bao nhiêu, bỏ sót bao nhiêu), hoặc các chỉ số dựa trên khoảng cách như Boundary Displacement Error (độ lệch trung bình giữa biên phát hiện và biên chuẩn), hoặc Pratt’s Figure of Merit (đánh giá cả độ đúng và độ lệch). Nếu không có ground truth, bạn có thể đánh giá gián tiếp bằng cách xem biên dùng cho bước sau (phân đoạn/nhận dạng) có giúp kết quả tốt lên không.

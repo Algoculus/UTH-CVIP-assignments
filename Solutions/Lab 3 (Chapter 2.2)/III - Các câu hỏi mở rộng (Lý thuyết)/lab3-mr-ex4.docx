@@ -1,0 +1,4 @@
+4. Làm thế nào để áp dụng Canny cho các video?
+
+Cách làm chuẩn là xử lý từng frame của video theo pipeline giống ảnh tĩnh: đọc frame → (có thể resize) → chuyển xám → blur → Canny → hiển thị/lưu kết quả. Vì video có nhiều frame liên tiếp, bạn nên chú ý thêm yếu tố thời gian: dùng tham số ổn định giữa các frame để biên không “nhấp nháy”, và có thể làm mượt theo thời gian (ví dụ blur nhẹ hoặc lọc trung bình trên vài frame) nếu video nhiễu.
+Để chạy mượt, thường người ta: giảm độ phân giải, xử lý ROI, hoặc xử lý cách frame (ví dụ 1/2 hoặc 1/3 số frame). Nếu mục tiêu là phát hiện biên của vật thể chuyển động, bạn có thể kết hợp với phát hiện chuyển động/foreground (background subtraction) rồi chỉ chạy Canny trên vùng có chuyển động để vừa nhanh vừa giảm biên rác.

@@ -1,0 +1,21 @@
+pair_id,description,label,distance,similarity
+0,Camera - Camera+Noise,1,4,0.984375
+1,Camera - Camera+Rotate90,1,121,0.52734375
+2,Camera - Camera+Bright,1,4,0.984375
+3,Camera - Camera+Scaled,1,2,0.9921875
+4,Astronaut - Astronaut+Noise,1,1,0.99609375
+5,Astronaut - Astronaut+Rotate90,1,133,0.48046875
+6,Moon - Moon+Noise,1,16,0.9375
+7,Moon - Moon+Dark,1,1,0.99609375
+8,Coins - Coins+Noise,1,4,0.984375
+9,Coins - Coins+Bright,1,0,1.0
+10,Camera - Astronaut,0,147,0.42578125
+11,Camera - Coins,0,107,0.58203125
+12,Camera - Moon,0,104,0.59375
+13,Camera - Text,0,141,0.44921875
+14,Astronaut - Coins,0,118,0.5390625
+15,Astronaut - Moon,0,137,0.46484375
+16,Astronaut - Text,0,144,0.4375
+17,Coins - Moon,0,89,0.65234375
+18,Coins - Text,0,146,0.4296875
+19,Moon - Text,0,141,0.44921875

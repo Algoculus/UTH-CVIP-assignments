@@ -1,0 +1,123 @@
+# UTH-CVIP Assignments - Consolidated Requirements
+# Python 3.8+ required
+
+# ============================================
+# CORE DEPENDENCIES (All Labs)
+# ============================================
+
+# Image processing and computer vision
+numpy>=1.21.0
+opencv-python>=4.5.0
+Pillow>=9.0.0
+scikit-image>=0.19.0
+
+# Data processing and analysis
+pandas>=1.4.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.12.0
+
+# Machine learning
+scikit-learn>=1.0.0
+
+# Jupyter environment
+jupyter>=1.0.0
+ipykernel>=6.0.0
+nbclient>=0.5.0
+nbformat>=5.0.0
+
+# ============================================
+# LAB 4 SPECIFIC: Wavelet Image Similarity
+# ============================================
+
+PyWavelets>=1.4.0
+
+# ============================================
+# LAB 5 SPECIFIC: Face Recognition
+# ============================================
+
+# OPTION A: PyTorch-based (Phu Thuan, Thanh Duy projects)
+# Recommended for GPU acceleration with CUDA/ROCm or Apple Silicon MPS
+torch>=2.0.0
+torchvision>=0.15.0
+facenet-pytorch>=2.5.0
+
+# OPTION B: TensorFlow-based (Gia Luat project)
+# Use if you prefer TensorFlow ecosystem
+# tensorflow>=2.10.0
+# keras-facenet>=0.3.0
+# tf-keras
+
+# Face detection (compatible with both PyTorch and TensorFlow)
+mtcnn>=0.1.0
+
+# OPTION C: Ken Ny FastAPI backend
+# Uncomment if running Ken Ny's web application
+# fastapi>=0.100.0
+# uvicorn[standard]>=0.20.0
+# pydantic>=2.0.0
+# python-multipart>=0.0.6
+# deepface>=0.0.79
+
+# ============================================
+# DEVELOPMENT TOOLS (Optional)
+# ============================================
+
+# Code quality (optional but recommended)
+# ruff>=0.1.0
+# autoflake>=2.0.0
+
+# Testing (optional)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+
+# ============================================
+# INSTALLATION INSTRUCTIONS
+# ============================================
+
+# 1. Create virtual environment:
+#    python -m venv venv
+#    
+# 2. Activate environment:
+#    Windows: venv\Scripts\activate
+#    Linux/Mac: source venv/bin/activate
+#
+# 3. Install base requirements:
+#    pip install --upgrade pip
+#    pip install -r requirements.txt
+#
+# 4. For Lab 5 - Choose ONE option:
+#    
+#    OPTION A (PyTorch - GPU/MPS support):
+#    Already included in requirements above
+#    
+#    OPTION B (TensorFlow):
+#    Uncomment TensorFlow lines above and reinstall
+#    
+#    OPTION C (Ken Ny web app):
+#    cd "Solutions/Lab 5 (Chapter 3.2)/Ken Ny (face recognition)/apps/ai-service"
+#    pip install -r requirements.txt
+#
+# 5. Verify installation:
+#    python tools/preflight_check.py
+#
+# ============================================
+# HARDWARE REQUIREMENTS
+# ============================================
+
+# Lab 1-4: CPU sufficient
+# Lab 5 face recognition:
+#   - Minimum: CPU (slow but works)
+#   - Recommended: GPU with CUDA or Apple Silicon with MPS
+#   - Webcam required for real-time recognition
+#
+# ============================================
+# NOTES
+# ============================================
+
+# - keras-facenet and facenet-pytorch are INCOMPATIBLE
+#   Choose based on your Lab 5 project
+# - TensorFlow may require additional setup for GPU
+# - PyTorch MPS support requires macOS 12.3+ with Apple Silicon
+# - MTCNN works with both TensorFlow and PyTorch backends

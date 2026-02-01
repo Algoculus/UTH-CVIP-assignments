@@ -1,9 +1,0 @@
-3. Canny có thể được sử dụng để phát hiện các cạnh trong ảnh màu không? Nếu có, thì như thế nào?
-
-Chuyển sang grayscale: Cách đơn giản nhất - chuyển ảnh màu về ảnh xám rồi áp dụng Canny
-
-Xử lý từng kênh màu: Áp dụng Canny riêng cho kênh R, G, B rồi kết hợp kết quả (OR hoặc weighted combination)
-
-Sử dụng không gian màu khác: Chuyển sang HSV, Lab và xử lý kênh có thông tin cạnh tốt nhất (như L trong Lab)
-
-Vector gradient màu: Tính gradient trên cả 3 kênh đồng thời, sau đó tính magnitude tổng hợp
