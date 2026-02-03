@@ -1,8 +1,4 @@
-"""
-Preprocessing Module
-====================
-Các hàm tiền xử lý ảnh và tạo cặp ảnh để đánh giá.
-"""
+# Preprocessing Module - Các hàm tiền xử lý ảnh và tạo cặp ảnh để đánh giá
 
 import numpy as np
 from PIL import Image
@@ -14,28 +10,12 @@ import csv
 SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp'}
 
 
+# Đọc ảnh, chuyển sang grayscale (nếu cần) và resize về kích thước chuẩn
 def load_and_preprocess(
     image_path: Union[str, Path],
     size: Tuple[int, int] = (256, 256),
     grayscale: bool = True
 ) -> np.ndarray:
-    """
-    Đọc ảnh, chuyển sang grayscale (nếu cần) và resize về kích thước chuẩn.
-    
-    Parameters
-    ----------
-    image_path : str or Path
-        Đường dẫn tới file ảnh.
-    size : tuple
-        Kích thước (width, height) để resize.
-    grayscale : bool
-        Nếu True, chuyển ảnh sang grayscale.
-        
-    Returns
-    -------
-    np.ndarray
-        Mảng numpy chứa ảnh đã xử lý, dtype float32.
-    """
     img = Image.open(image_path)
     
     if grayscale:
@@ -49,22 +29,8 @@ def load_and_preprocess(
     return arr
 
 
+# Load ảnh từ path hoặc trả về nếu đã là numpy array
 def load_image_array(image_input: Union[str, Path, np.ndarray], size: Tuple[int, int] = (256, 256)) -> np.ndarray:
-    """
-    Load ảnh từ path hoặc trả về nếu đã là numpy array.
-    
-    Parameters
-    ----------
-    image_input : str, Path, or np.ndarray
-        Đường dẫn tới ảnh hoặc mảng numpy.
-    size : tuple
-        Kích thước chuẩn hóa.
-        
-    Returns
-    -------
-    np.ndarray
-        Ảnh grayscale dạng float32.
-    """
     if isinstance(image_input, np.ndarray):
         # Đã là array, chuẩn hóa về grayscale nếu cần
         if len(image_input.shape) == 3:
@@ -85,39 +51,11 @@ def load_image_array(image_input: Union[str, Path, np.ndarray], size: Tuple[int,
         return load_and_preprocess(image_input, size=size, grayscale=True)
 
 
+# Thu thập các cặp ảnh similar/dissimilar từ cấu trúc thư mục
 def create_image_pairs_from_folder(
     root_dir: Union[str, Path],
     output_csv: Optional[Union[str, Path]] = None
 ) -> List[Tuple[str, str, int]]:
-    """
-    Thu thập các cặp ảnh similar/dissimilar từ cấu trúc thư mục.
-    
-    Cấu trúc thư mục mong đợi:
-    root_dir/
-        similar/
-            pair1/
-                image_a.jpg
-                image_b.jpg
-            pair2/
-                ...
-        dissimilar/
-            pair1/
-                image_a.jpg
-                image_b.jpg
-            ...
-    
-    Parameters
-    ----------
-    root_dir : str or Path
-        Thư mục gốc chứa similar/ và dissimilar/.
-    output_csv : str or Path, optional
-        Đường dẫn lưu file CSV chứa danh sách cặp.
-        
-    Returns
-    -------
-    list of tuples
-        Danh sách (path1, path2, label) với label=1 cho similar, 0 cho dissimilar.
-    """
     root_dir = Path(root_dir)
     pairs = []
     
@@ -169,33 +107,12 @@ def create_image_pairs_from_folder(
     return pairs
 
 
+# Tạo dataset test gồm các cặp ảnh tổng hợp từ scikit-image
 def generate_synthetic_pairs(
     num_similar: int = 10,
     num_dissimilar: int = 10,
     seed: int = 42
 ) -> Tuple[List[Tuple[np.ndarray, np.ndarray, str]], np.ndarray]:
-    """
-    Tạo dataset test gồm các cặp ảnh tổng hợp từ scikit-image.
-    
-    Sử dụng các ảnh mẫu có sẵn và tạo biến thể (nhiễu, xoay, scale, brightness)
-    để tạo cặp tương tự, và các ảnh khác nội dung cho cặp không tương tự.
-    
-    Parameters
-    ----------
-    num_similar : int
-        Số lượng tối đa cặp tương tự.
-    num_dissimilar : int
-        Số lượng tối đa cặp không tương tự.
-    seed : int
-        Random seed để tái lập kết quả.
-        
-    Returns
-    -------
-    image_pairs : list of tuples
-        Danh sách (img1, img2, description).
-    labels : np.ndarray
-        Mảng nhãn (1=similar, 0=dissimilar).
-    """
     np.random.seed(seed)
     
     # Import ảnh mẫu từ skimage
@@ -297,23 +214,12 @@ def generate_synthetic_pairs(
     return image_pairs, np.array(labels)
 
 
+# Lưu danh sách cặp ảnh vào file CSV
 def save_pairs_to_csv(
     pairs: List[Tuple],
     output_path: Union[str, Path],
     has_description: bool = False
 ):
-    """
-    Lưu danh sách cặp ảnh vào file CSV.
-    
-    Parameters
-    ----------
-    pairs : list
-        Danh sách các tuple (path1, path2, label) hoặc (path1, path2, label, desc).
-    output_path : str or Path
-        Đường dẫn file CSV đầu ra.
-    has_description : bool
-        Nếu True, mỗi tuple có thêm trường description.
-    """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -331,20 +237,8 @@ def save_pairs_to_csv(
     print(f"[OK] Đã lưu {len(pairs)} cặp ảnh vào: {output_path}")
 
 
+# Đọc danh sách cặp ảnh từ file CSV
 def load_pairs_from_csv(csv_path: Union[str, Path]) -> List[Tuple[str, str, int]]:
-    """
-    Đọc danh sách cặp ảnh từ file CSV.
-    
-    Parameters
-    ----------
-    csv_path : str or Path
-        Đường dẫn file CSV.
-        
-    Returns
-    -------
-    list of tuples
-        Danh sách (image1_path, image2_path, label).
-    """
     pairs = []
     
     with open(csv_path, 'r', encoding='utf-8') as f:

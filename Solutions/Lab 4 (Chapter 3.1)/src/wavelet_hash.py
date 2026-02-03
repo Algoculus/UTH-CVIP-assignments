@@ -1,8 +1,4 @@
-"""
-Wavelet Hash Module
-===================
-Các hàm tạo hash wavelet cho ảnh.
-"""
+# Wavelet Hash Module - Các hàm tạo hash wavelet cho ảnh
 
 import numpy as np
 import pywt
@@ -13,28 +9,9 @@ from pathlib import Path
 from .preprocessing import load_image_array
 
 
+# Cấu hình cho thuật toán Wavelet Hash
 @dataclass
 class WaveletHashConfig:
-    """
-    Cấu hình cho thuật toán Wavelet Hash.
-    
-    Attributes
-    ----------
-    wavelet : str
-        Loại wavelet (haar, db2, db4, sym2, coif1, bior1.3, ...).
-    level : int
-        Số cấp độ phân rã DWT (thường 1-4).
-    subband_mode : str
-        Chế độ lấy subband: LL, LL_LH, LL_HL, LL_LH_HL, ALL.
-    quant_method : str
-        Phương pháp lượng tử hóa: median, mean, ternary, uniform_step.
-    hash_bits : int
-        Độ dài hash đầu ra (số bit).
-    image_size : tuple
-        Kích thước chuẩn hóa ảnh (width, height).
-    quant_kwargs : dict
-        Các tham số bổ sung cho phương pháp lượng tử hóa.
-    """
     wavelet: str = "haar"
     level: int = 2
     subband_mode: str = "LL"
@@ -70,67 +47,20 @@ CONFIG_DB4_L3_MEDIAN = WaveletHashConfig(wavelet="db4", level=3, quant_method="m
 CONFIG_SYM2_L2_MEAN = WaveletHashConfig(wavelet="sym2", level=2, quant_method="mean")
 
 
+# Thực hiện phân tích Wavelet 2D đa cấp (Discrete Wavelet Transform 2D)
 def dwt2(
     image_arr: np.ndarray,
     wavelet: str = "haar",
     level: int = 2
 ) -> list:
-    """
-    Thực hiện phân tích Wavelet 2D đa cấp (Discrete Wavelet Transform 2D).
-    
-    Parameters
-    ----------
-    image_arr : np.ndarray
-        Ảnh grayscale dạng 2D array.
-    wavelet : str
-        Loại wavelet (haar, db1-db20, sym2-sym20, coif1-coif5, bior1.1-bior6.8, ...).
-    level : int
-        Số cấp độ phân rã (level >= 1).
-        
-    Returns
-    -------
-    list
-        Danh sách coefficients: [cA_n, (cH_n, cV_n, cD_n), ..., (cH_1, cV_1, cD_1)]
-        
-    Notes
-    -----
-    - cA (Approximation): Thành phần tần số thấp, chứa thông tin chính.
-    - cH (Horizontal detail): Chi tiết theo chiều ngang.
-    - cV (Vertical detail): Chi tiết theo chiều dọc.
-    - cD (Diagonal detail): Chi tiết theo đường chéo.
-    """
     return pywt.wavedec2(image_arr, wavelet=wavelet, level=level)
 
 
+# Trích xuất vector đặc trưng từ các subband wavelet đã chọn
 def get_feature_vector(
     coeffs: list,
     mode: str = "LL"
 ) -> np.ndarray:
-    """
-    Trích xuất vector đặc trưng từ các subband wavelet đã chọn.
-    
-    Parameters
-    ----------
-    coeffs : list
-        Coefficients từ hàm dwt2().
-    mode : str
-        Chế độ lấy subband:
-        - "LL": Chỉ lấy approximation band (ổn định nhất).
-        - "LL_LH": Lấy LL + Horizontal detail.
-        - "LL_HL": Lấy LL + Vertical detail.
-        - "LL_LH_HL": Lấy LL + LH + HL (bỏ diagonal).
-        - "ALL": Lấy tất cả các band ở cấp cao nhất.
-        
-    Returns
-    -------
-    np.ndarray
-        Vector đặc trưng 1D (flattened).
-        
-    Notes
-    -----
-    Ở level n, coeffs[0] là cA (approximation), coeffs[1] là (cH, cV, cD) của level n,
-    coeffs[2] là (cH, cV, cD) của level n-1, v.v.
-    """
     mode = mode.upper()
     
     # Lấy approximation ở cấp cao nhất
@@ -166,37 +96,13 @@ def get_feature_vector(
         )
 
 
+# Chuyển đổi vector đặc trưng (float) thành mảng bit với độ dài cố định
 def quantize_to_bits(
     feature_vector: np.ndarray,
     method: str = "median",
     hash_bits: int = 256,
     **kwargs
 ) -> np.ndarray:
-    """
-    Chuyển đổi vector đặc trưng (float) thành mảng bit với độ dài cố định.
-    
-    Parameters
-    ----------
-    feature_vector : np.ndarray
-        Vector đặc trưng từ hàm get_feature_vector().
-    method : str
-        Phương pháp lượng tử hóa:
-        - "median": bit = (value > median) ? 1 : 0
-        - "mean": bit = (value > mean) ? 1 : 0
-        - "ternary": Sử dụng ngưỡng robust (median ± k*MAD)
-        - "uniform_step": Lượng tử hóa theo bước delta, lấy LSB
-    hash_bits : int
-        Độ dài hash đầu ra (số bit).
-    **kwargs : dict
-        Tham số bổ sung cho từng phương pháp:
-        - ternary: k (float, default=1.0), mid_policy (0 hoặc 1, default=0)
-        - uniform_step: delta (float, default=5.0)
-        
-    Returns
-    -------
-    np.ndarray
-        Mảng bit (uint8 với giá trị 0/1), độ dài = hash_bits.
-    """
     method = method.lower()
     vec = feature_vector.astype(np.float32)
     
@@ -243,20 +149,8 @@ def quantize_to_bits(
         return out
 
 
+# Chuyển mảng bit thành chuỗi hex
 def bits_to_hex(bits: np.ndarray) -> str:
-    """
-    Chuyển mảng bit thành chuỗi hex.
-    
-    Parameters
-    ----------
-    bits : np.ndarray
-        Mảng bit (0/1).
-        
-    Returns
-    -------
-    str
-        Chuỗi hex đại diện cho hash.
-    """
     # Padding để chia hết cho 8
     pad_len = (-len(bits)) % 8
     if pad_len:
@@ -266,39 +160,12 @@ def bits_to_hex(bits: np.ndarray) -> str:
     return bytes_arr.tobytes().hex()
 
 
+# Tính wavelet hash cho một ảnh
 def wavelet_hash(
     image_input: Union[str, Path, np.ndarray],
     config: Optional[WaveletHashConfig] = None,
     **kwargs
 ) -> Dict[str, Any]:
-    """
-    Tính wavelet hash cho một ảnh.
-    
-    Parameters
-    ----------
-    image_input : str, Path, or np.ndarray
-        Đường dẫn ảnh hoặc mảng numpy.
-    config : WaveletHashConfig, optional
-        Cấu hình hash. Nếu None, sử dụng DEFAULT_CONFIG.
-    **kwargs
-        Override các tham số trong config:
-        - wavelet, level, subband_mode, quant_method, hash_bits, image_size
-        
-    Returns
-    -------
-    dict
-        Dictionary chứa:
-        - hash_bits: np.ndarray - mảng bit của hash
-        - hash_hex: str - chuỗi hex
-        - config: dict - cấu hình đã sử dụng
-        - subband_shape: tuple - kích thước của subband chính
-    
-    Examples
-    --------
-    >>> result = wavelet_hash("image.jpg", wavelet="db2", level=3)
-    >>> print(result["hash_hex"])
-    >>> print(result["hash_bits"])
-    """
     # Khởi tạo config
     if config is None:
         config = DEFAULT_CONFIG
@@ -348,6 +215,7 @@ def wavelet_hash(
     }
 
 
+# Phiên bản đơn giản của wavelet_hash, chỉ trả về mảng bit
 def wavelet_hash_simple(
     image_input: Union[str, Path, np.ndarray],
     wavelet: str = "haar",
@@ -356,29 +224,6 @@ def wavelet_hash_simple(
     hash_bits: int = 256,
     image_size: Tuple[int, int] = (256, 256)
 ) -> np.ndarray:
-    """
-    Phiên bản đơn giản của wavelet_hash, chỉ trả về mảng bit.
-    
-    Parameters
-    ----------
-    image_input : str, Path, or np.ndarray
-        Đường dẫn ảnh hoặc mảng numpy.
-    wavelet : str
-        Loại wavelet.
-    level : int
-        Số cấp độ phân rã.
-    quant_method : str
-        Phương pháp lượng tử hóa.
-    hash_bits : int
-        Độ dài hash.
-    image_size : tuple
-        Kích thước chuẩn hóa.
-        
-    Returns
-    -------
-    np.ndarray
-        Mảng bit của hash.
-    """
     result = wavelet_hash(
         image_input,
         wavelet=wavelet,
@@ -391,26 +236,13 @@ def wavelet_hash_simple(
     return result["hash_bits"]
 
 
+# Hiển thị phân rã wavelet của ảnh
 def visualize_wavelet_decomposition(
     image_input: Union[str, Path, np.ndarray],
     wavelet: str = "haar",
     level: int = 2,
     figsize: Tuple[int, int] = (12, 8)
 ) -> None:
-    """
-    Hiển thị phân rã wavelet của ảnh.
-    
-    Parameters
-    ----------
-    image_input : str, Path, or np.ndarray
-        Đường dẫn ảnh hoặc mảng numpy.
-    wavelet : str
-        Loại wavelet.
-    level : int
-        Số cấp độ phân rã.
-    figsize : tuple
-        Kích thước figure.
-    """
     import matplotlib.pyplot as plt
     
     # Load ảnh

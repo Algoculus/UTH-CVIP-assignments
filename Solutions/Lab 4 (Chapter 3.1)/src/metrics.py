@@ -1,38 +1,12 @@
-"""
-Metrics Module
-==============
-Các hàm tính toán metrics đánh giá hiệu suất thuật toán.
-"""
+# Metrics Module - Các hàm tính toán metrics đánh giá hiệu suất thuật toán
 
 import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
 from sklearn.metrics import roc_curve, auc
 
 
+# Tính khoảng cách Hamming giữa 2 hash (số bit khác nhau)
 def hamming_distance(hash1: np.ndarray, hash2: np.ndarray) -> int:
-    """
-    Tính khoảng cách Hamming giữa 2 hash.
-    
-    Khoảng cách Hamming = số bit khác nhau giữa 2 hash.
-    Khoảng cách càng nhỏ = 2 ảnh càng tương tự.
-    
-    Parameters
-    ----------
-    hash1 : np.ndarray
-        Mảng bit của hash 1.
-    hash2 : np.ndarray
-        Mảng bit của hash 2.
-        
-    Returns
-    -------
-    int
-        Số bit khác nhau.
-        
-    Raises
-    ------
-    ValueError
-        Nếu 2 hash có độ dài khác nhau.
-    """
     if len(hash1) != len(hash2):
         raise ValueError(
             f"2 hash phải có cùng độ dài: {len(hash1)} != {len(hash2)}"
@@ -40,78 +14,22 @@ def hamming_distance(hash1: np.ndarray, hash2: np.ndarray) -> int:
     return int(np.sum(hash1 != hash2))
 
 
+# Tính khoảng cách Hamming chuẩn hóa (0-1)
 def normalized_hamming_distance(hash1: np.ndarray, hash2: np.ndarray) -> float:
-    """
-    Tính khoảng cách Hamming chuẩn hóa (0-1).
-    
-    Parameters
-    ----------
-    hash1 : np.ndarray
-        Mảng bit của hash 1.
-    hash2 : np.ndarray
-        Mảng bit của hash 2.
-        
-    Returns
-    -------
-    float
-        Khoảng cách chuẩn hóa trong khoảng [0, 1].
-    """
     return hamming_distance(hash1, hash2) / len(hash1)
 
 
+# Tính độ tương đồng Hamming (1 - normalized distance)
 def hamming_similarity(hash1: np.ndarray, hash2: np.ndarray) -> float:
-    """
-    Tính độ tương đồng Hamming (1 - normalized distance).
-    
-    Parameters
-    ----------
-    hash1 : np.ndarray
-        Mảng bit của hash 1.
-    hash2 : np.ndarray
-        Mảng bit của hash 2.
-        
-    Returns
-    -------
-    float
-        Độ tương đồng trong khoảng [0, 1].
-    """
     return 1.0 - normalized_hamming_distance(hash1, hash2)
 
 
+# Tính các metrics đánh giá tại một ngưỡng cụ thể
 def calculate_metrics(
     distances: np.ndarray,
     labels: np.ndarray,
     threshold: float
 ) -> Dict[str, Any]:
-    """
-    Tính các metrics đánh giá tại một ngưỡng cụ thể.
-    
-    Quy ước:
-    - distance <= threshold => Dự đoán = 1 (Similar)
-    - distance > threshold => Dự đoán = 0 (Dissimilar)
-    
-    Parameters
-    ----------
-    distances : np.ndarray
-        Mảng khoảng cách Hamming cho từng cặp.
-    labels : np.ndarray
-        Mảng nhãn thực tế (1=similar, 0=dissimilar).
-    threshold : float
-        Ngưỡng phân loại.
-        
-    Returns
-    -------
-    dict
-        Dictionary chứa:
-        - threshold: Ngưỡng đã sử dụng
-        - accuracy: Tỷ lệ phân loại đúng
-        - sensitivity (TPR/Recall): Tỷ lệ phát hiện đúng cặp tương tự
-        - specificity (TNR): Tỷ lệ phát hiện đúng cặp khác nhau
-        - precision: Độ chính xác khi dự đoán tương tự
-        - f1_score: Harmonic mean của precision và recall
-        - TP, TN, FP, FN: Confusion matrix values
-        - predictions: Mảng dự đoán
-    """
     # Phân loại dựa trên ngưỡng
     predictions = (distances <= threshold).astype(int)
     
@@ -148,36 +66,13 @@ def calculate_metrics(
     }
 
 
+# Tìm ngưỡng tối ưu theo tiêu chí được chọn
 def find_optimal_threshold(
     distances: np.ndarray,
     labels: np.ndarray,
     criterion: str = "accuracy",
     num_thresholds: int = 100
 ) -> Dict[str, Any]:
-    """
-    Tìm ngưỡng tối ưu theo tiêu chí được chọn.
-    
-    Parameters
-    ----------
-    distances : np.ndarray
-        Mảng khoảng cách Hamming.
-    labels : np.ndarray
-        Mảng nhãn thực tế.
-    criterion : str
-        Tiêu chí tối ưu:
-        - "accuracy": Tối đa hóa accuracy
-        - "youden": Tối đa hóa Youden's J (sensitivity + specificity - 1)
-        - "f1": Tối đa hóa F1-score
-    num_thresholds : int
-        Số lượng ngưỡng để thử.
-        
-    Returns
-    -------
-    dict
-        Dictionary chứa metrics tại ngưỡng tối ưu và thông tin bổ sung:
-        - all_thresholds: Danh sách ngưỡng đã thử
-        - all_metrics: Danh sách metrics tương ứng
-    """
     # Tạo danh sách ngưỡng
     min_dist = distances.min()
     max_dist = distances.max()
@@ -212,37 +107,11 @@ def find_optimal_threshold(
     return best_metrics
 
 
+# Tính đường cong ROC và AUC
 def compute_roc_auc(
     distances: np.ndarray,
     labels: np.ndarray
 ) -> Dict[str, Any]:
-    """
-    Tính đường cong ROC và AUC.
-    
-    Parameters
-    ----------
-    distances : np.ndarray
-        Mảng khoảng cách Hamming.
-    labels : np.ndarray
-        Mảng nhãn thực tế.
-        
-    Returns
-    -------
-    dict
-        Dictionary chứa:
-        - fpr: False Positive Rate tại mỗi ngưỡng
-        - tpr: True Positive Rate tại mỗi ngưỡng
-        - thresholds: Các ngưỡng tương ứng
-        - auc: Area Under ROC Curve
-        - optimal_idx: Index của điểm tối ưu (Youden's J)
-        - optimal_threshold: Ngưỡng tối ưu
-        - optimal_tpr: TPR tại điểm tối ưu
-        - optimal_fpr: FPR tại điểm tối ưu
-        
-    Notes
-    -----
-    Vì distance nhỏ = tương tự, cần đổi dấu distance để dùng với roc_curve.
-    """
     # Đổi dấu vì sklearn.roc_curve mong đợi score cao = positive
     scores = -distances.astype(float)
     
@@ -268,30 +137,12 @@ def compute_roc_auc(
     }
 
 
+# Đánh giá một phương pháp hash trên tập cặp ảnh
 def evaluate_method_on_pairs(
     pairs: List[Tuple],
     hash_function,
     **hash_kwargs
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Đánh giá một phương pháp hash trên tập cặp ảnh.
-    
-    Parameters
-    ----------
-    pairs : list of tuples
-        Danh sách (path1/img1, path2/img2, label) hoặc (img1, img2, label).
-    hash_function : callable
-        Hàm tính hash, nhận ảnh/path và trả về mảng bit.
-    **hash_kwargs
-        Tham số cho hash_function.
-        
-    Returns
-    -------
-    distances : np.ndarray
-        Mảng khoảng cách Hamming.
-    labels : np.ndarray
-        Mảng nhãn.
-    """
     distances = []
     labels = []
     
@@ -319,25 +170,11 @@ def evaluate_method_on_pairs(
     return np.array(distances), np.array(labels)
 
 
+# Format kết quả đánh giá thành bảng text
 def format_metrics_table(
     results: List[Dict[str, Any]],
     metrics_to_show: List[str] = None
 ) -> str:
-    """
-    Format kết quả đánh giá thành bảng text.
-    
-    Parameters
-    ----------
-    results : list of dicts
-        Danh sách kết quả từ evaluate_method_on_pairs + find_optimal_threshold.
-    metrics_to_show : list of str
-        Các metrics cần hiển thị.
-        
-    Returns
-    -------
-    str
-        Bảng kết quả dạng text.
-    """
     if metrics_to_show is None:
         metrics_to_show = ['accuracy', 'sensitivity', 'specificity', 'f1_score', 'threshold']
     
@@ -375,22 +212,7 @@ def plot_roc_curve(
     show_optimal: bool = True,
     save_path: Optional[str] = None
 ) -> None:
-    """
-    Vẽ đường cong ROC.
-    
-    Parameters
-    ----------
-    roc_data : dict
-        Dữ liệu từ compute_roc_auc().
-    ax : matplotlib.axes.Axes, optional
-        Axes để vẽ. Nếu None, tạo figure mới.
-    title : str
-        Tiêu đề biểu đồ.
-    show_optimal : bool
-        Hiển thị điểm tối ưu.
-    save_path : str, optional
-        Đường dẫn lưu hình.
-    """
+    # Vẽ đường cong ROC từ dữ liệu compute_roc_auc()
     import matplotlib.pyplot as plt
     
     if ax is None:
@@ -433,20 +255,7 @@ def plot_confusion_matrix(
     title: str = "Confusion Matrix",
     save_path: Optional[str] = None
 ) -> None:
-    """
-    Vẽ confusion matrix.
-    
-    Parameters
-    ----------
-    metrics : dict
-        Kết quả từ calculate_metrics().
-    ax : matplotlib.axes.Axes, optional
-        Axes để vẽ.
-    title : str
-        Tiêu đề.
-    save_path : str, optional
-        Đường dẫn lưu hình.
-    """
+    # Vẽ confusion matrix từ kết quả calculate_metrics()
     import matplotlib.pyplot as plt
     import seaborn as sns
     

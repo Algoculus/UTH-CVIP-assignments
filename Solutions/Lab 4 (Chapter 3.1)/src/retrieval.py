@@ -1,8 +1,4 @@
-"""
-Image Retrieval Module
-======================
-Các hàm xây dựng ứng dụng tìm kiếm hình ảnh dựa trên wavelet hash.
-"""
+# Image Retrieval Module - Các hàm xây dựng ứng dụng tìm kiếm hình ảnh dựa trên wavelet hash
 
 import numpy as np
 from pathlib import Path
@@ -21,27 +17,7 @@ def build_hash_gallery(
     verbose: bool = True,
     **hash_kwargs
 ) -> Dict[str, Dict[str, Any]]:
-    """
-    Xây dựng gallery hash cho tất cả ảnh trong thư mục.
-    
-    Parameters
-    ----------
-    image_dir : str or Path
-        Thư mục chứa ảnh.
-    config : WaveletHashConfig, optional
-        Cấu hình wavelet hash.
-    recursive : bool
-        Nếu True, tìm ảnh trong các thư mục con.
-    verbose : bool
-        Hiển thị tiến trình.
-    **hash_kwargs
-        Tham số bổ sung cho wavelet_hash.
-        
-    Returns
-    -------
-    dict
-        Dictionary {image_path: hash_result}
-    """
+    # Xây dựng gallery hash cho tất cả ảnh trong thư mục, trả về dict {image_path: hash_result}
     image_dir = Path(image_dir)
     
     if config is None:
@@ -87,25 +63,7 @@ def build_hash_gallery_from_arrays(
     config: Optional[WaveletHashConfig] = None,
     **hash_kwargs
 ) -> Dict[str, Dict[str, Any]]:
-    """
-    Xây dựng gallery hash từ danh sách mảng numpy.
-    
-    Parameters
-    ----------
-    images : list of np.ndarray
-        Danh sách ảnh dạng numpy array.
-    names : list of str, optional
-        Tên cho mỗi ảnh. Nếu None, dùng "image_0", "image_1", ...
-    config : WaveletHashConfig, optional
-        Cấu hình wavelet hash.
-    **hash_kwargs
-        Tham số bổ sung.
-        
-    Returns
-    -------
-    dict
-        Dictionary {name: hash_result}
-    """
+    # Xây dựng gallery hash từ danh sách numpy arrays, trả về dict {name: hash_result}
     if names is None:
         names = [f"image_{i}" for i in range(len(images))]
     
@@ -132,29 +90,7 @@ def retrieve_similar_images(
     max_distance: Optional[int] = None,
     **hash_kwargs
 ) -> List[Tuple[str, int, float]]:
-    """
-    Tìm kiếm top-k ảnh tương tự nhất với query trong gallery.
-    
-    Parameters
-    ----------
-    query : str, Path, or np.ndarray
-        Ảnh query.
-    gallery : dict
-        Gallery hash từ build_hash_gallery().
-    top_k : int
-        Số lượng kết quả trả về.
-    config : WaveletHashConfig, optional
-        Cấu hình hash (phải khớp với config dùng để tạo gallery).
-    max_distance : int, optional
-        Ngưỡng distance tối đa. Nếu set, chỉ trả về ảnh có distance <= max_distance.
-    **hash_kwargs
-        Tham số bổ sung cho wavelet_hash.
-        
-    Returns
-    -------
-    list of tuples
-        Danh sách (image_path, hamming_distance, similarity_score) sắp xếp theo distance tăng dần.
-    """
+    # Tìm kiếm top-k ảnh tương tự nhất với query trong gallery, trả về list (path, distance, similarity)
     if config is None:
         config = DEFAULT_CONFIG
     
@@ -193,22 +129,7 @@ def display_retrieval_results(
     max_display: int = 5,
     save_path: Optional[str] = None
 ) -> None:
-    """
-    Hiển thị kết quả retrieval.
-    
-    Parameters
-    ----------
-    query : str, Path, or np.ndarray
-        Ảnh query.
-    results : list of tuples
-        Kết quả từ retrieve_similar_images().
-    figsize : tuple
-        Kích thước figure.
-    max_display : int
-        Số lượng kết quả hiển thị tối đa.
-    save_path : str, optional
-        Đường dẫn lưu hình.
-    """
+    # Hiển thị kết quả retrieval với ảnh query và top results
     from PIL import Image
     
     # Giới hạn số lượng hiển thị
@@ -276,20 +197,7 @@ def interactive_retrieval_demo(
     top_k: int = 5,
     config: Optional[WaveletHashConfig] = None
 ) -> None:
-    """
-    Demo tương tác cho image retrieval.
-    
-    Parameters
-    ----------
-    gallery : dict
-        Gallery hash.
-    query_options : list of str
-        Danh sách đường dẫn ảnh query.
-    top_k : int
-        Số lượng kết quả.
-    config : WaveletHashConfig, optional
-        Cấu hình hash.
-    """
+    # Demo tương tác cho image retrieval
     print("\n" + "="*60)
     print("IMAGE RETRIEVAL DEMO")
     print("="*60)
@@ -317,27 +225,7 @@ def evaluate_retrieval_performance(
     top_k_values: List[int] = [1, 3, 5, 10],
     config: Optional[WaveletHashConfig] = None
 ) -> Dict[str, Any]:
-    """
-    Đánh giá hiệu suất retrieval với nhiều giá trị top-k.
-    
-    Parameters
-    ----------
-    gallery : dict
-        Gallery hash.
-    query_labels : dict
-        {query_path: class_label}
-    gallery_labels : dict
-        {gallery_path: class_label}
-    top_k_values : list of int
-        Các giá trị k cần đánh giá.
-    config : WaveletHashConfig, optional
-        Cấu hình hash.
-        
-    Returns
-    -------
-    dict
-        Dictionary chứa các metrics: precision@k, recall@k cho mỗi k.
-    """
+    # Đánh giá hiệu suất retrieval với nhiều giá trị top-k, trả về precision@k cho mỗi k
     results = {f"P@{k}": [] for k in top_k_values}
     
     for query_path, query_class in query_labels.items():
